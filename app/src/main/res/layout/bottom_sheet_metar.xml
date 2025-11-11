@@ -1,97 +1,97 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/bottom_sheet_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@android:color/white"
     android:orientation="vertical"
-
+    android:paddingLeft="16dp"
+    android:paddingTop="16dp"
+    android:paddingRight="16dp"
+    android:paddingBottom="16dp"
     app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
     app:behavior_peekHeight="160dp">
+
+    <View
+        android:layout_width="40dp"
+        android:layout_height="4dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="12dp"
+        android:background="@android:color/darker_gray" />
 
     <TextView
         android:id="@+id/bs_icao_code"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:text="SCEL"
         android:textSize="24sp"
-        android:textStyle="bold"
-        tools:text="SCEL" />
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/bs_station_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="16sp"
-        tools:text="Arturo Merino Benitez" />
-
-    <Space
-        android:layout_width="match_parent"
-        android:layout_height="16dp" />
+        android:layout_marginBottom="16dp"
+        android:text="Arturo Merino Benitez"
+        android:textSize="16sp" />
 
     <TextView
         android:id="@+id/bs_wind"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        tools:text="Viento: 5 nudos" />
+        android:text="Viento: 10 nudos"
+        android:textSize="18sp" />
 
     <TextView
         android:id="@+id/bs_visibility"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        tools:text="Visibilidad: 10000 m" />
+        android:text="Visibilidad: 9999 m"
+        android:textSize="18sp" />
 
     <TextView
         android:id="@+id/bs_temperature"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        tools:text="Temperatura: 15°C" />
-
-    <Space
-        android:layout_width="match_parent"
-        android:layout_height="16dp" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="METAR (Raw):"
-        android:textStyle="bold" />
+        android:text="Temperatura: 15°C"
+        android:textSize="18sp" />
 
     <TextView
         android:id="@+id/bs_raw_metar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:fontFamily="monospace"
-        tools:text="SCEL 101500Z 05005KT 9999 FEW030 15/07 Q1018" />
-
-    <Space
-        android:layout_width="match_parent"
-        android:layout_height="16dp" />
+        android:layout_marginTop="16dp"
+        android:background="#f0f0f0"
+        android:padding="8dp"
+        android:text="METAR SCEL 170400Z..."
+        android:textSize="14sp" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="TAF (Raw):"
+        android:layout_marginTop="16dp"
+        android:text="Pronóstico (TAF):"
+        android:textSize="16sp"
         android:textStyle="bold" />
 
     <TextView
         android:id="@+id/bs_raw_taf"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:fontFamily="monospace"
-        tools:text="TAF SCEL 101100Z 1012/1112 05005KT 9999 FEW030 TX17/1018Z TN08/1110Z..." />
-
-    <Space
-        android:layout_width="match_parent"
-        android:layout_height="16dp" />
+        android:layout_marginTop="4dp"
+        android:background="#f0f0f0"
+        android:padding="8dp"
+        android:text="Cargando TAF..."
+        android:textSize="14sp" />
 
     <Button
         android:id="@+id/btn_traducir_taf"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Traducir TAF con IA"
-        android:visibility="gone"
-        tools:visibility="visible" />
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="16dp"
+        android:text="Traducir TAF con IA" />
 
     <ProgressBar
         android:id="@+id/taf_loading_spinner"
@@ -99,15 +99,18 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
+        android:layout_marginTop="8dp"
         android:visibility="gone" />
 
     <TextView
         android:id="@+id/bs_traduccion_ia"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingTop="8dp"
-        android:visibility="gone"
-        tools:text="La IA dice: El viento estará calmado..."
-        tools:visibility="visible" />
+        android:layout_marginTop="16dp"
+        android:background="#f0f0f0"
+        android:padding="8dp"
+        android:text="Traducción aparecerá aquí..."
+        android:textSize="14sp"
+        android:visibility="gone" />
 
 </LinearLayout>
