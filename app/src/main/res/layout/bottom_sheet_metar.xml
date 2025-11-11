@@ -5,12 +5,10 @@
     android:id="@+id/bottom_sheet_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="#FFFFFF"
     android:orientation="vertical"
-    android:padding="16dp"
 
-    app:behavior_peekHeight="160dp"
-    app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
+    app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
+    app:behavior_peekHeight="160dp">
 
     <TextView
         android:id="@+id/bs_icao_code"
