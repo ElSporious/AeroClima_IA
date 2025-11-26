@@ -20,6 +20,7 @@ import com.example.app_aeroclima.network.MetarData
 import com.example.app_aeroclima.network.MetarResponse
 import com.example.app_aeroclima.network.TafResponse
 import com.example.app_aeroclima.network.WeatherApiService
+import com.google.ai.client.generativeai.BuildConfig
 import com.google.ai.client.generativeai.GenerativeModel
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
@@ -221,7 +222,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         val retrofit = Retrofit.Builder().baseUrl(BASE_URL).addConverterFactory(MoshiConverterFactory.create(moshi)).build()
         val weatherService = retrofit.create(WeatherApiService::class.java)
 
-        weatherService.getMetar(icaoCode, "fdf0e8434e744ea398099d82ae7a6d6a").enqueue(object : Callback<MetarResponse> {
+        weatherService.getMetar(icaoCode, BuildConfig.CHECKWX_API_KEY).enqueue(object : Callback<MetarResponse> {
             override fun onResponse(call: Call<MetarResponse>, response: Response<MetarResponse>) {
                 if (response.isSuccessful) {
                     currentMetarData = response.body()?.data?.firstOrNull()
@@ -247,7 +248,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     private fun fetchTafData(weatherService: WeatherApiService, icaoCode: String) {
-        weatherService.getTaf(icaoCode, "fdf0e8434e744ea398099d82ae7a6d6a").enqueue(object : Callback<TafResponse> {
+        weatherService.getTaf(icaoCode, BuildConfig.CHECKWX_API_KEY).enqueue(object : Callback<TafResponse> {
             override fun onResponse(call: Call<TafResponse>, response: Response<TafResponse>) {
                 if (response.isSuccessful) {
                     currentTafText = response.body()?.data?.firstOrNull()?.raw_text
