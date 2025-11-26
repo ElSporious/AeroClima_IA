@@ -4,7 +4,6 @@ val localProperties = Properties()
 val localPropertiesFile = rootProject.file("local.properties")
 if (localPropertiesFile.exists()) {
     localPropertiesFile.inputStream().use { localProperties.load(it) }
-
 }
 
 plugins {
@@ -25,9 +24,11 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
-        buildConfigField("String", "CHECKWX_API_KEY", project.properties["CHECKWX_API_KEY"].toString())
+        val checkWxKey = localProperties.getProperty("CHECKWX_API_KEY") ?: ""
+        buildConfigField("String", "CHECKWX_API_KEY", "\"$checkWxKey\"")
 
-        buildConfigField("String", "GEMINI_API_KEY", "\"${localProperties.getProperty("GEMINI_API_KEY")}\"")
+        val geminiKey = localProperties.getProperty("GEMINI_API_KEY") ?: ""
+        buildConfigField("String", "GEMINI_API_KEY", "\"$geminiKey\"")
     }
 
     buildTypes {
@@ -60,6 +61,11 @@ dependencies {
     implementation(libs.material)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
+
+    
+    // Sirve para usar "by viewModels()" en el MainActivity
+    implementation("androidx.activity:activity-ktx:1.9.0")
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -79,12 +85,7 @@ dependencies {
     implementation("com.google.android.gms:play-services-location:21.2.0")
 
     // dependencias para gemini
-    // SDK de Gemini
     implementation("com.google.ai.client.generativeai:generativeai:0.7.0")
-    // Corutinas (necesarias para las llamadas asíncronas)
-    // evita que la app se congele al llamar a la ia por red
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.0")
-    // Desugaring (para que las APIs de Java 8+ de Gemini funcionen en minSdk 24).
-    // para comprender el codigo "moderno" a versiones anteriores
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.4")
 }
