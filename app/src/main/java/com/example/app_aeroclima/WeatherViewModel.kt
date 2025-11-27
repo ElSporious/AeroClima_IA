@@ -19,16 +19,12 @@ class WeatherViewModel : ViewModel() {
 
     private val _metarData = MutableLiveData<MetarData?>()
     val metarData: LiveData<MetarData?> = _metarData
-
     private val _tafText = MutableLiveData<String?>()
     val tafText: LiveData<String?> = _tafText
-
     private val _translation = MutableLiveData<String>()
     val translation: LiveData<String> = _translation
-
     private val _isLoading = MutableLiveData<Boolean>()
     val isLoading: LiveData<Boolean> = _isLoading
-
     private val _errorMessage = MutableLiveData<String?>()
     val errorMessage: LiveData<String?> = _errorMessage
 
