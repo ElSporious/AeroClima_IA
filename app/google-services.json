@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "966156930842",
+    "project_id": "aeroclima-2bf4f",
+    "storage_bucket": "aeroclima-2bf4f.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:966156930842:android:2749a78afb554d08fb26a3",
+        "android_client_info": {
+          "package_name": "com.example.app_aeroclima"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBrlXCqxSWai-ubIAUHhKeN1WF2uafBirU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
