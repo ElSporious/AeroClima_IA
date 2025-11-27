@@ -2,13 +2,16 @@ package com.example.app_aeroclima
 
 import DatabaseHelper
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
+import android.text.Editable
+import android.text.TextWatcher
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
-
-import android.text.Editable
-import android.text.TextWatcher
+import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class RegisterActivity : AppCompatActivity() {
     private lateinit var dbHelper: DatabaseHelper
@@ -22,9 +25,9 @@ class RegisterActivity : AppCompatActivity() {
 
         dbHelper = DatabaseHelper(this)
 
-        etUsername = findViewById<EditText>(R.id.etRegisterUsername)
-        etPassword = findViewById<EditText>(R.id.etRegisterPassword)
-        btnRegister = findViewById<Button>(R.id.btnRegister)
+        etUsername = findViewById(R.id.etRegisterUsername)
+        etPassword = findViewById(R.id.etRegisterPassword)
+        btnRegister = findViewById(R.id.btnRegister)
 
         btnRegister.isEnabled = false
 
@@ -35,7 +38,6 @@ class RegisterActivity : AppCompatActivity() {
             override fun afterTextChanged(s: Editable?) {
                 val user = etUsername.text.toString().trim()
                 val pass = etPassword.text.toString().trim()
-
                 btnRegister.isEnabled = user.isNotEmpty() && pass.isNotEmpty()
             }
         }
@@ -47,13 +49,22 @@ class RegisterActivity : AppCompatActivity() {
             val user = etUsername.text.toString().trim()
             val pass = etPassword.text.toString().trim()
 
-            val success = dbHelper.addUser(user, pass)
+            btnRegister.isEnabled = false
+            Toast.makeText(this, "Creando usuario...", Toast.LENGTH_SHORT).show()
 
-            if (success) {
-                Toast.makeText(this, "Usuario registrado exitosamente", Toast.LENGTH_SHORT).show()
-                finish()
-            } else {
-                Toast.makeText(this, "Error al registrar. ¿Usuario ya existe?", Toast.LENGTH_SHORT).show()
+            lifecycleScope.launch(Dispatchers.IO) {
+                val success = dbHelper.addUser(user, pass)
+
+                withContext(Dispatchers.Main) {
+                    if (success) {
+                        Toast.makeText(this@RegisterActivity, "Usuario registrado exitosamente", Toast.LENGTH_SHORT).show()
+                        finish() // Vuelve a la pantalla anterior (Login)
+                    } else {
+                        Toast.makeText(this@RegisterActivity, "Error al registrar. ¿Usuario ya existe?", Toast.LENGTH_SHORT).show()
+                        // Reactivamos el botón si falla
+                        btnRegister.isEnabled = true
+                    }
+                }
             }
         }
     }

@@ -3,14 +3,16 @@ package com.example.app_aeroclima
 import DatabaseHelper
 import android.content.Intent
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
+import android.text.Editable
+import android.text.TextWatcher
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
-
-import android.text.Editable
-import android.text.TextWatcher
-
+import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class LoginActivity : AppCompatActivity() {
 
@@ -25,9 +27,9 @@ class LoginActivity : AppCompatActivity() {
 
         dbHelper = DatabaseHelper(this)
 
-        etUsername = findViewById<EditText>(R.id.etLoginUsername)
-        etPassword = findViewById<EditText>(R.id.etLoginPassword)
-        btnLogin = findViewById<Button>(R.id.btnLogin)
+        etUsername = findViewById(R.id.etLoginUsername)
+        etPassword = findViewById(R.id.etLoginPassword)
+        btnLogin = findViewById(R.id.btnLogin)
         val btnGoToRegister = findViewById<Button>(R.id.btnGoToRegister)
 
         btnLogin.isEnabled = false
@@ -39,7 +41,6 @@ class LoginActivity : AppCompatActivity() {
             override fun afterTextChanged(s: Editable?) {
                 val user = etUsername.text.toString().trim()
                 val pass = etPassword.text.toString().trim()
-
                 btnLogin.isEnabled = user.isNotEmpty() && pass.isNotEmpty()
             }
         }
@@ -48,25 +49,31 @@ class LoginActivity : AppCompatActivity() {
         etPassword.addTextChangedListener(loginTextWatcher)
 
         btnLogin.setOnClickListener {
-
             val user = etUsername.text.toString().trim()
             val pass = etPassword.text.toString().trim()
 
-            val userExists = dbHelper.checkUser(user, pass)
+            btnLogin.isEnabled = false
+            Toast.makeText(this, "Verificando...", Toast.LENGTH_SHORT).show()
 
-            if (userExists) {
-                Toast.makeText(this, "Login exitoso", Toast.LENGTH_SHORT).show()
-                val intent = Intent(this, MainActivity::class.java)
-                startActivity(intent)
-                finish()
-            } else {
-                Toast.makeText(this, "Usuario o contraseña incorrectos", Toast.LENGTH_SHORT).show()
+            // Iniciamos la corrutina en segundo plano (IO)
+            lifecycleScope.launch(Dispatchers.IO) {
+                val userExists = dbHelper.checkUser(user, pass)
+
+                withContext(Dispatchers.Main) {
+                    if (userExists) {
+                        Toast.makeText(this@LoginActivity, "Login exitoso", Toast.LENGTH_SHORT).show()
+                        val intent = Intent(this@LoginActivity, MainActivity::class.java)
+                        startActivity(intent)
+                        finish()
+                    } else {
+                        Toast.makeText(this@LoginActivity, "Usuario o contraseña incorrectos", Toast.LENGTH_SHORT).show()
+                        btnLogin.isEnabled = true
+                    }
+                }
             }
         }
 
-
         btnGoToRegister.setOnClickListener {
-
             val intent = Intent(this, RegisterActivity::class.java)
             startActivity(intent)
         }
