@@ -1,116 +1,143 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/bottom_sheet_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@android:color/white"
     android:orientation="vertical"
-    android:paddingLeft="16dp"
-    android:paddingTop="16dp"
-    android:paddingRight="16dp"
-    android:paddingBottom="16dp"
+    android:padding="24dp"
+    app:behavior_hideable="true"
+    app:behavior_peekHeight="0dp"
     app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
-    app:behavior_peekHeight="160dp">
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <View
-        android:layout_width="40dp"
-        android:layout_height="4dp"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginBottom="12dp"
-        android:background="@android:color/darker_gray" />
-
-    <TextView
-        android:id="@+id/bs_icao_code"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="SCEL"
-        android:textSize="24sp"
-        android:textStyle="bold" />
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="8dp">
+
+        <TextView
+            android:id="@+id/bs_icao_code"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="SCEL"
+            android:textColor="@android:color/black"
+            android:textSize="28sp"
+            android:textStyle="bold" />
+
+        <ImageButton
+            android:id="@+id/btn_favorite"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@android:drawable/btn_star_big_off"
+            android:contentDescription="Favorito" />
+    </LinearLayout>
 
     <TextView
         android:id="@+id/bs_station_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:text="Santiago Intl Airport"
+        android:textSize="16sp"
         android:layout_marginBottom="16dp"
-        android:text="Arturo Merino Benitez"
-        android:textSize="16sp" />
+        android:textColor="@android:color/darker_gray" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#E0E0E0"
+        android:layout_marginBottom="16dp"/>
 
     <TextView
         android:id="@+id/bs_wind"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Viento: 10 nudos"
-        android:textSize="18sp" />
+        android:drawablePadding="8dp"
+        android:text="Viento: 180° a 10 kts"
+        android:textSize="16sp"
+        android:layout_marginBottom="8dp"
+        app:drawableStartCompat="@android:drawable/ic_menu_compass" />
 
     <TextView
         android:id="@+id/bs_visibility"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Visibilidad: 9999 m"
-        android:textSize="18sp" />
+        android:text="Visibilidad: 10km"
+        android:textSize="16sp"
+        android:layout_marginBottom="8dp"/>
 
     <TextView
         android:id="@+id/bs_temperature"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Temperatura: 15°C"
-        android:textSize="18sp" />
+        android:text="Temperatura: 20°C"
+        android:textSize="16sp"
+        android:layout_marginBottom="24dp"/>
+
+    <TextView
+        android:text="METAR (Crudo):"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:layout_marginBottom="4dp"/>
 
     <TextView
         android:id="@+id/bs_raw_metar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:background="#f0f0f0"
+        android:text="SCEL 12345Z ..."
+        android:fontFamily="monospace"
+        android:background="#F5F5F5"
         android:padding="8dp"
-        android:text="METAR SCEL 170400Z..."
-        android:textSize="14sp" />
+        android:layout_marginBottom="16dp"/>
 
     <TextView
+        android:text="TAF (Crudo):"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="Pronóstico (TAF):"
-        android:textSize="16sp"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        android:layout_marginBottom="4dp"/>
 
     <TextView
         android:id="@+id/bs_raw_taf"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
-        android:background="#f0f0f0"
+        android:text="TAF ..."
+        android:fontFamily="monospace"
+        android:background="#F5F5F5"
         android:padding="8dp"
-        android:text="Cargando TAF..."
-        android:textSize="14sp" />
+        android:layout_marginBottom="16dp"/>
 
     <Button
         android:id="@+id/btn_traducir_taf"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="16dp"
-        android:text="Traducir TAF con IA" />
+        android:text="Traducir TAF con IA ✨"
+        android:backgroundTint="#673AB7"
+        android:textColor="@android:color/white"/>
 
     <ProgressBar
         android:id="@+id/taf_loading_spinner"
-        style="?android:attr/progressBarStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="8dp"
-        android:visibility="gone" />
+        android:layout_gravity="center"
+        android:visibility="gone"
+        android:layout_marginTop="8dp"/>
 
     <TextView
         android:id="@+id/bs_traduccion_ia"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:background="#f0f0f0"
-        android:padding="8dp"
-        android:text="Traducción aparecerá aquí..."
-        android:textSize="14sp"
-        android:visibility="gone" />
+        android:layout_marginTop="8dp"
+        android:padding="12dp"
+        android:background="#F3E5F5"
+        android:textColor="#4A148C"
+        android:visibility="gone"
+        android:textStyle="italic"/>
 
 </LinearLayout>
