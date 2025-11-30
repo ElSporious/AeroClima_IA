@@ -13,7 +13,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import com.example.app_aeroclima.db.MySqlManager // Si te da error, borra ".db"
+import com.example.app_aeroclima.db.MySqlManager
 import com.example.app_aeroclima.network.MetarData
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -22,6 +22,8 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import android.content.Intent
+import androidx.activity.result.contract.ActivityResultContracts
 
 class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
@@ -57,9 +59,11 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     // Botón Favorito
     private lateinit var btnFavorite: ImageButton
 
+    // Botón ver favoritos
+    private lateinit var fabFavorites: View
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        // Pantalla completa (Estilo inmersivo)
         window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
         setContentView(R.layout.activity_main)
 
@@ -97,7 +101,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         // Estado inicial del panel: Oculto
         bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
 
-        // --- LISTENERS (CLICK) ---
+        // LISTENERS (CLICK)
 
         // 1. Buscar Aeropuerto
         searchButton.setOnClickListener {
@@ -110,7 +114,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
             }
         }
 
-        // 2. Traducir con IA
+        // Traducir con IA
         btnTraducirTaf.setOnClickListener {
             val taf = bsRawTaf.text.toString()
             if (taf.isNotEmpty() && taf != "Cargando...") {
@@ -118,17 +122,35 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
             }
         }
 
-        // 3. Botón Favorito (Estrella)
+        // Botón Favorito
         btnFavorite.setOnClickListener {
             val icao = bsIcaoCode.text.toString()
             if (icao.isNotEmpty() && icao != "..." && icao != "N/A") {
                 toggleFavorite(icao)
             }
         }
+
+        // Botón ver favoritos
+        fabFavorites = findViewById(R.id.fab_favorites)
+        fabFavorites.setOnClickListener {
+            val intent = Intent(this, FavoritesActivity::class.java)
+            favoritesLauncher.launch(intent)
+        }
+    }
+
+    private val favoritesLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == RESULT_OK) {
+            val selectedIcao = result.data?.getStringExtra("SELECTED_ICAO")
+            if (!selectedIcao.isNullOrEmpty()) {
+                // Escribe el código en la barra y busca
+                icaoInput.setText(selectedIcao)
+                viewModel.fetchWeatherData(selectedIcao)
+                hideKeyboard()
+            }
+        }
     }
 
     private fun setupObservers() {
-        // Observer: Cuando llegan datos del clima (METAR)
         viewModel.metarData.observe(this) { metar ->
             if (metar != null) {
                 populateBottomSheet(metar)
@@ -169,10 +191,10 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         }
     }
 
-    // --- LÓGICA DE DATOS ---
+    // LÓGICA DE DATOS
 
     private fun populateBottomSheet(metar: MetarData) {
-        // 1. Mostrar datos del clima
+        // Mostrar datos del clima
         val speed = metar.wind?.speed_kts ?: 0
         if (speed == 0) {
             bsWind.text = "Viento: Calma (0 nudos)"
@@ -186,8 +208,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         bsTemperature.text = "Temp: ${metar.temperature?.celsius ?: "-"}°C"
         bsRawMetar.text = metar.raw_text ?: ""
 
-        // 2. VERIFICAR SI ES FAVORITO EN LA NUBE
-        // Esto consulta a tu base de datos MySQL vía Ngrok
+        // VERIFICA SI ES FAVORITO EN LA NUBE
         val codigo = metar.icao ?: ""
         if (codigo.isNotEmpty()) {
             mysqlManager.checkIsFavorite(codigo) { isFav ->
@@ -199,7 +220,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         }
     }
 
-    // --- LÓGICA DE FAVORITOS ---
+    // LÓGICA DE FAVORITOS
 
     private fun updateFavoriteIcon(isFav: Boolean) {
         if (isFav) {
@@ -210,10 +231,9 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     private fun toggleFavorite(icao: String) {
-        btnFavorite.isEnabled = false // Evitar doble click mientras carga
+        btnFavorite.isEnabled = false // Evitar doble click
 
         if (isCurrentIcaoFavorite) {
-            // Si ya es favorito -> Eliminar
             mysqlManager.removeFavorite(icao,
                 onSuccess = {
                     isCurrentIcaoFavorite = false
@@ -227,7 +247,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                 }
             )
         } else {
-            // Si no es favorito -> Agregar
             mysqlManager.addFavorite(icao,
                 onSuccess = {
                     isCurrentIcaoFavorite = true
@@ -243,7 +262,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         }
     }
 
-    // --- LÓGICA DEL MAPA ---
+    // LÓGICA DEL MAPA
 
     private fun updateMap(metar: MetarData) {
         if (!::mMap.isInitialized) return
@@ -261,15 +280,11 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
         enableMyLocation()
-        // Si ya había datos cargados antes de que el mapa estuviera listo, actualízalo
         viewModel.metarData.value?.let { updateMap(it) }
-
-        // Si tocan el marcador, abrir panel
         mMap.setOnMarkerClickListener {
             bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
             true
         }
-        // Si tocan el mapa vacío, cerrar panel
         mMap.setOnMapClickListener {
             bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
         }
@@ -290,8 +305,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         }
     }
 
-    // --- UTILIDADES ---
-
+    // UTILIDADES
     private fun applyWindowInsets(view: View) {
         ViewCompat.setOnApplyWindowInsetsListener(window.decorView) { _, insets ->
             val bars = insets.getInsets(WindowInsetsCompat.Type.systemBars())

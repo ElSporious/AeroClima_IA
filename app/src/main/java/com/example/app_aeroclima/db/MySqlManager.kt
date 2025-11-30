@@ -25,6 +25,15 @@ data class BackendResponse(
     val is_favorite: Boolean?
 )
 
+data class FavoritesResponse(
+    val status: String?,
+    val data: List<FavoriteItem>?
+)
+
+data class FavoriteItem(
+    val icao_code: String
+)
+
 // --- INTERFAZ API ---
 interface BackendApiService {
     @FormUrlEncoded
@@ -46,6 +55,11 @@ interface BackendApiService {
         @Query("email") email: String,
         @Query("icao") icao: String
     ): Response<BackendResponse>
+
+    @GET("get_favorites.php")
+    suspend fun getFavorites(
+        @Query("email") email: String
+    ): Response<FavoritesResponse>
 }
 
 // --- MANAGER ---
@@ -55,12 +69,12 @@ class MySqlManager {
     private val service: BackendApiService
 
     init {
-        // URL de Ngrok (Recuerda cambiarla si reinicias Ngrok)
+        // URL de Ngrok
         val BASE_URL = "https://noncorrespondingly-didymous-basil.ngrok-free.dev/aeroclima_api/"
 
         val moshi = Moshi.Builder().add(KotlinJsonAdapterFactory()).build()
 
-        // Logger (Muestra las peticiones en Logcat si es necesario debuggear)
+        // Logger
         val logging = HttpLoggingInterceptor()
         logging.setLevel(HttpLoggingInterceptor.Level.BODY)
 
@@ -107,7 +121,7 @@ class MySqlManager {
                     }
                 }
             } catch (e: Exception) {
-                e.printStackTrace() // Imprime el error solo en consola para el desarrollador
+                e.printStackTrace()
                 withContext(Dispatchers.Main) { onFailure() }
             }
         }
@@ -149,12 +163,35 @@ class MySqlManager {
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 val response = service.checkFavorite(email, icao)
-                // Si la respuesta es correcta y is_favorite es true, devolvemos true
                 val isFav = response.body()?.is_favorite ?: false
                 withContext(Dispatchers.Main) { onResult(isFav) }
             } catch (e: Exception) {
-                // Si falla la conexión, asumimos que no es favorito (para no bloquear la UI)
                 withContext(Dispatchers.Main) { onResult(false) }
+            }
+        }
+    }
+
+    // Función obtener la lista
+    fun getFavorites(onResult: (List<String>) -> Unit) {
+        val email = getCurrentEmail()
+        if (email == null) {
+            onResult(emptyList())
+            return
+        }
+
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val response = service.getFavorites(email)
+                if (response.isSuccessful && response.body()?.status == "success") {
+                    // Convertir la lista de objetos a una lista simple de Strings ["SCEL", "SPJC"]
+                    val list = response.body()?.data?.map { it.icao_code } ?: emptyList()
+                    withContext(Dispatchers.Main) { onResult(list) }
+                } else {
+                    withContext(Dispatchers.Main) { onResult(emptyList()) }
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                withContext(Dispatchers.Main) { onResult(emptyList()) }
             }
         }
     }
