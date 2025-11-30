@@ -16,6 +16,8 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.SignInButton
 import com.google.android.gms.common.api.ApiException
+import com.google.firebase.auth.FirebaseAuth // IMPORTANTE
+import com.google.firebase.auth.GoogleAuthProvider // IMPORTANTE
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -29,12 +31,17 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var btnGoogleSignIn: SignInButton
     private lateinit var googleSignInClient: GoogleSignInClient
 
+    // Agregamos Firebase Auth
+    private lateinit var auth: FirebaseAuth
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
-        // Configuración Inicial
+        // Inicializar Firebase
+        auth = FirebaseAuth.getInstance()
         dbHelper = DatabaseHelper(this)
+
         setupViews()
         setupGoogleSignIn()
     }
@@ -48,7 +55,6 @@ class LoginActivity : AppCompatActivity() {
 
         btnLogin.isEnabled = false
 
-        // Lógica de validación de texto
         val loginTextWatcher = object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
@@ -67,7 +73,6 @@ class LoginActivity : AppCompatActivity() {
             performLocalLogin(user, pass)
         }
 
-        // login con google
         btnGoogleSignIn.setOnClickListener {
             signInWithGoogle()
         }
@@ -77,9 +82,11 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
-
     private fun setupGoogleSignIn() {
+        val webClientId = BuildConfig.GOOGLE_WEB_CLIENT_ID
+
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestIdToken(webClientId)
             .requestEmail()
             .build()
         googleSignInClient = GoogleSignIn.getClient(this, gso)
@@ -90,29 +97,43 @@ class LoginActivity : AppCompatActivity() {
         googleSignInLauncher.launch(signInIntent)
     }
 
-    // listener del resultado de Google (el reemplazo al antiguo onActivityResult)
     private val googleSignInLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == RESULT_OK) {
             val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
             try {
                 val account = task.getResult(ApiException::class.java)
-                handleGoogleLoginSuccess(account.email ?: "")
+                // AHORA SÍ: Usamos el token de Google para entrar a Firebase
+                firebaseAuthWithGoogle(account.idToken!!)
             } catch (e: ApiException) {
                 Toast.makeText(this, "Fallo Google: ${e.statusCode}", Toast.LENGTH_SHORT).show()
             }
         }
     }
 
-    private fun handleGoogleLoginSuccess(email: String) {
+    // --- EL PUENTE MÁGICO ---
+    private fun firebaseAuthWithGoogle(idToken: String) {
+        Toast.makeText(this, "Conectando con Firebase...", Toast.LENGTH_SHORT).show()
+        val credential = GoogleAuthProvider.getCredential(idToken, null)
+
+        auth.signInWithCredential(credential)
+            .addOnCompleteListener(this) { task ->
+                if (task.isSuccessful) {
+                    // ¡ÉXITO! Firebase ya sabe quién eres
+                    val user = auth.currentUser
+                    handleLoginSuccess(user?.email ?: "")
+                } else {
+                    Toast.makeText(this, "Error Firebase: ${task.exception?.message}", Toast.LENGTH_LONG).show()
+                }
+            }
+    }
+
+    private fun handleLoginSuccess(email: String) {
         if (email.isEmpty()) return
 
         lifecycleScope.launch(Dispatchers.IO) {
-            // Verificamos si este usuario de Google ya existe en nuestra DB local
-            // Usamos el email como usuario y una contraseña por defecto interna
-
+            // Guardamos en local solo por si acaso, pero lo importante es Firebase
             val fakePassword = "google_auth_token"
-            val userExists = dbHelper.checkUser(email, fakePassword)
-            if (!userExists) {
+            if (!dbHelper.checkUser(email, fakePassword)) {
                 dbHelper.addUser(email, fakePassword)
             }
 
@@ -124,6 +145,7 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun performLocalLogin(user: String, pass: String) {
+        // El login local no conecta con Firebase en este ejemplo
         btnLogin.isEnabled = false
         Toast.makeText(this, "Verificando...", Toast.LENGTH_SHORT).show()
 

@@ -30,6 +30,9 @@ android {
 
         val geminiKey = localProperties.getProperty("GEMINI_API_KEY") ?: ""
         buildConfigField("String", "GEMINI_API_KEY", "\"$geminiKey\"")
+
+        val googleId = localProperties.getProperty("GOOGLE_WEB_CLIENT_ID") ?: ""
+        buildConfigField("String", "GOOGLE_WEB_CLIENT_ID", "\"$googleId\"")
     }
 
     buildTypes {
@@ -63,7 +66,6 @@ dependencies {
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
 
-    
     // Sirve para usar "by viewModels()" en el MainActivity
     implementation("androidx.activity:activity-ktx:1.9.0")
 
@@ -80,6 +82,9 @@ dependencies {
     implementation("com.squareup.retrofit2:converter-moshi:2.9.0")
     implementation("com.squareup.moshi:moshi-kotlin:1.14.0")
 
+    // Logger para ver errores de conexión
+    implementation("com.squareup.okhttp3:logging-interceptor:4.11.0")
+
     // implementaciones de google
     implementation("com.google.android.gms:play-services-maps:18.2.0")
     implementation("com.google.android.material:material:1.12.0")
@@ -93,5 +98,8 @@ dependencies {
     // Firebase
     implementation(platform("com.google.firebase:firebase-bom:34.6.0"))
     implementation("com.google.firebase:firebase-analytics")
+    implementation("com.google.firebase:firebase-auth") // <--- ESTA FALTABA
     implementation("com.google.android.gms:play-services-auth:21.0.0")
+
+
 }
