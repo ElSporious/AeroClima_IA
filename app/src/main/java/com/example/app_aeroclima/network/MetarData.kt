@@ -22,7 +22,9 @@ data class Geometry(
 
 
 data class Wind(
-    @field:Json(name = "speed_kts") val speed_kts: Int?
+    val speed_kts: Int?,
+    val degrees: Int?,
+    val gust_kts: Int?
 )
 
 data class Visibility(
