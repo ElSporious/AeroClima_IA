@@ -1,6 +1,5 @@
 package com.example.app_aeroclima
 
-import DatabaseHelper
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
@@ -10,7 +9,7 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.lifecycleScope
+import com.example.app_aeroclima.db.MySqlManager
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -18,13 +17,11 @@ import com.google.android.gms.common.SignInButton
 import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+
 
 class LoginActivity : AppCompatActivity() {
 
-    private lateinit var dbHelper: DatabaseHelper
+    private val mysqlManager = MySqlManager()
     private lateinit var etUsername: EditText
     private lateinit var etPassword: EditText
     private lateinit var btnLogin: Button
@@ -36,10 +33,7 @@ class LoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
-        // Inicializar Firebase
         auth = FirebaseAuth.getInstance()
-        dbHelper = DatabaseHelper(this)
-
         setupViews()
         setupGoogleSignIn()
     }
@@ -65,16 +59,14 @@ class LoginActivity : AppCompatActivity() {
         etUsername.addTextChangedListener(loginTextWatcher)
         etPassword.addTextChangedListener(loginTextWatcher)
 
+        // Lógica de inicio de sesión Local
         btnLogin.setOnClickListener {
             val user = etUsername.text.toString().trim()
             val pass = etPassword.text.toString().trim()
             performLocalLogin(user, pass)
         }
 
-        btnGoogleSignIn.setOnClickListener {
-            signInWithGoogle()
-        }
-
+        btnGoogleSignIn.setOnClickListener { signInWithGoogle() }
         btnGoToRegister.setOnClickListener {
             startActivity(Intent(this, RegisterActivity::class.java))
         }
@@ -83,9 +75,7 @@ class LoginActivity : AppCompatActivity() {
     private fun setupGoogleSignIn() {
         val webClientId = BuildConfig.GOOGLE_WEB_CLIENT_ID
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken(webClientId)
-            .requestEmail()
-            .build()
+            .requestIdToken(webClientId).requestEmail().build()
         googleSignInClient = GoogleSignIn.getClient(this, gso)
     }
 
@@ -109,45 +99,37 @@ class LoginActivity : AppCompatActivity() {
     private fun firebaseAuthWithGoogle(idToken: String) {
         Toast.makeText(this, "Conectando...", Toast.LENGTH_SHORT).show()
         val credential = GoogleAuthProvider.getCredential(idToken, null)
-        auth.signInWithCredential(credential)
-            .addOnCompleteListener(this) { task ->
-                if (task.isSuccessful) {
-                    val user = auth.currentUser
-                    handleLoginSuccess(user?.email ?: "")
-                } else {
-                    Toast.makeText(this, "Error Firebase: ${task.exception?.message}", Toast.LENGTH_LONG).show()
-                }
-            }
-    }
-
-    private fun handleLoginSuccess(email: String) {
-        if (email.isEmpty()) return
-        lifecycleScope.launch(Dispatchers.IO) {
-            val fakePassword = "google_auth_token"
-            if (!dbHelper.checkUser(email, fakePassword)) {
-                dbHelper.addUser(email, fakePassword)
-            }
-            withContext(Dispatchers.Main) {
-                Toast.makeText(this@LoginActivity, "Bienvenido $email", Toast.LENGTH_SHORT).show()
-                goToMain()
+        auth.signInWithCredential(credential).addOnCompleteListener(this) { task ->
+            if (task.isSuccessful) {
+                val user = auth.currentUser
+                handleGoogleLoginSuccess(user?.email ?: "")
+            } else {
+                Toast.makeText(this, "Error Firebase: ${task.exception?.message}", Toast.LENGTH_LONG).show()
             }
         }
+    }
+
+    private fun handleGoogleLoginSuccess(email: String) {
+        if (email.isEmpty()) return
+        Toast.makeText(this, "Bienvenido $email", Toast.LENGTH_SHORT).show()
+        goToMain()
     }
 
     private fun performLocalLogin(user: String, pass: String) {
         btnLogin.isEnabled = false
         Toast.makeText(this, "Verificando...", Toast.LENGTH_SHORT).show()
-        lifecycleScope.launch(Dispatchers.IO) {
-            val userExists = dbHelper.checkUser(user, pass)
-            withContext(Dispatchers.Main) {
-                if (userExists) {
-                    goToMain()
-                } else {
-                    Toast.makeText(this@LoginActivity, "Credenciales incorrectas", Toast.LENGTH_SHORT).show()
-                    btnLogin.isEnabled = true
-                }
+
+        mysqlManager.loginUser(
+            user,
+            pass,
+            onSuccess = { email ->
+                goToMain()
+            },
+            onFailure = {
+                Toast.makeText(this@LoginActivity, "Credenciales incorrectas", Toast.LENGTH_SHORT).show()
+                btnLogin.isEnabled = true
             }
-        }
+        )
     }
 
     private fun goToMain() {

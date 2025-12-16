@@ -12,7 +12,44 @@
           "package_name": "com.example.app_aeroclima"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "966156930842-1n3vqj47ir2furlmb7h19k92au2avr3u.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.app_aeroclima",
+            "certificate_hash": "730568e6f5b6e7ae0842ef2047226f759c49e9a5"
+          }
+        },
+        {
+          "client_id": "966156930842-8d1qit9j05qpk3gglasekcb68797tu0c.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.app_aeroclima",
+            "certificate_hash": "d97005d47fab6cdefc566e7e421ca0a6383bc9a2"
+          }
+        },
+        {
+          "client_id": "966156930842-8uo9hudnuoc7oferop6sunu7sa5gcsae.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.app_aeroclima",
+            "certificate_hash": "64bdcff46a933774a55cebe0b92ff90b05a47f23"
+          }
+        },
+        {
+          "client_id": "966156930842-d3o8bdpp2h59mm8bdojrdejn53khh9s2.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.app_aeroclima",
+            "certificate_hash": "a4ccf7f4eb1b145356c87725150e6d592e68d771"
+          }
+        },
+        {
+          "client_id": "966156930842-48j7ott8uls4o675lf3ogs25qblj8md3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyBrlXCqxSWai-ubIAUHhKeN1WF2uafBirU"
@@ -20,7 +57,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "966156930842-48j7ott8uls4o675lf3ogs25qblj8md3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }
