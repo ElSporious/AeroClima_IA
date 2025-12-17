@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 
 class FavoritesAdapter(
     private var favorites: List<String>,
-    private val onItemClick: (String) -> Unit
+    private val onClick: (String) -> Unit
 ) : RecyclerView.Adapter<FavoritesAdapter.ViewHolder>() {
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -24,10 +24,7 @@ class FavoritesAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val icao = favorites[position]
         holder.tvIcao.text = icao
-
-        holder.itemView.setOnClickListener {
-            onItemClick(icao)
-        }
+        holder.itemView.setOnClickListener { onClick(icao) }
     }
 
     override fun getItemCount() = favorites.size

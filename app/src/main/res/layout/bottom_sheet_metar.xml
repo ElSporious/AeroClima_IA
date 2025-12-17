@@ -1,133 +1,304 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/bottom_sheet_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@android:color/white"
+    android:background="@drawable/bottom_sheet_background"
     android:orientation="vertical"
-    android:padding="16dp"
-    app:behavior_peekHeight="160dp"
+    app:behavior_peekHeight="130dp"
     app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
-
-    <View
-        android:layout_width="40dp"
-        android:layout_height="4dp"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginBottom="12dp"
-        android:background="@android:color/darker_gray" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:layout_marginBottom="4dp">
+        android:orientation="vertical"
+        android:padding="24dp">
+
+        <View
+            android:layout_width="40dp"
+            android:layout_height="4dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="20dp"
+            android:background="#E0E0E0"
+            android:backgroundTint="#CFD8DC" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/bs_icao_code"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="SCEL"
+                    android:fontFamily="sans-serif-black"
+                    android:textColor="@color/aero_text_dark"
+                    android:textSize="34sp" />
+
+                <TextView
+                    android:id="@+id/bs_station_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Comodoro Arturo Merino Benítez"
+                    android:textColor="@color/aero_text_medium"
+                    android:textSize="14sp"
+                    android:maxLines="2"
+                    android:ellipsize="end"/>
+            </LinearLayout>
+
+            <ImageButton
+                android:id="@+id/btn_favorite"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Favorito"
+                android:src="@android:drawable/btn_star_big_off"
+                app:tint="@color/aero_accent" />
+        </LinearLayout>
+
+        <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#EEEEEE" android:layout_marginTop="16dp" android:layout_marginBottom="16dp"/>
 
         <TextView
-            android:id="@+id/bs_icao_code"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="SCEL"
-            android:textColor="@android:color/black"
-            android:textSize="28sp"
-            android:textStyle="bold" />
+            android:text="Condiciones Actuales"
+            android:textStyle="bold"
+            android:textColor="@color/aero_text_dark"
+            android:textSize="18sp"
+            android:layout_marginBottom="12dp"/>
 
-        <ImageButton
-            android:id="@+id/btn_favorite"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="Favorito"
-            android:src="@android:drawable/btn_star_big_off" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:baselineAligned="false"
+            android:layout_marginBottom="24dp">
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginEnd="8dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="0dp"
+                app:strokeWidth="1dp"
+                app:strokeColor="#E0E0E0"
+                app:cardBackgroundColor="#F8FDFF">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp"
+                    android:gravity="center">
+                    <ImageView
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:src="@drawable/ic_wind"
+                        app:tint="@color/aero_primary"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="VIENTO"
+                        android:textSize="12sp"
+                        android:textColor="@color/aero_text_medium"
+                        android:layout_marginTop="8dp"/>
+                    <TextView
+                        android:id="@+id/bs_wind"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="0 nudos"
+                        android:textStyle="bold"
+                        android:textColor="@color/aero_text_dark"
+                        android:textSize="16sp"
+                        android:layout_marginTop="4dp"
+                        android:gravity="center"/>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginEnd="8dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="0dp"
+                app:strokeWidth="1dp"
+                app:strokeColor="#E0E0E0"
+                app:cardBackgroundColor="#F8FDFF">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp"
+                    android:gravity="center">
+                    <ImageView
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:src="@drawable/ic_visibility"
+                        app:tint="@color/aero_primary"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="VISIBILIDAD"
+                        android:textSize="12sp"
+                        android:textColor="@color/aero_text_medium"
+                        android:layout_marginTop="8dp"/>
+                    <TextView
+                        android:id="@+id/bs_visibility"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="9999 m"
+                        android:textStyle="bold"
+                        android:textColor="@color/aero_text_dark"
+                        android:textSize="16sp"
+                        android:layout_marginTop="4dp"
+                        android:gravity="center"/>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="0dp"
+                app:strokeWidth="1dp"
+                app:strokeColor="#E0E0E0"
+                app:cardBackgroundColor="#F8FDFF">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp"
+                    android:gravity="center">
+                    <ImageView
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:src="@drawable/ic_temperature"
+                        app:tint="@color/aero_accent"/> <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="TEMP"
+                    android:textSize="12sp"
+                    android:textColor="@color/aero_text_medium"
+                    android:layout_marginTop="8dp"/>
+                    <TextView
+                        android:id="@+id/bs_temperature"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="20°C"
+                        android:textStyle="bold"
+                        android:textColor="@color/aero_text_dark"
+                        android:textSize="16sp"
+                        android:layout_marginTop="4dp"
+                        android:gravity="center"/>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Pronóstico (TAF) e IA"
+            android:textStyle="bold"
+            android:textColor="@color/aero_text_dark"
+            android:textSize="18sp" />
+
+        <Button
+            android:id="@+id/btn_traducir_taf"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            style="@style/AeroButton"
+            android:text="✨ Analizar TAF con IA"
+            android:backgroundTint="@color/aero_accent"/>
+
+        <ProgressBar
+            android:id="@+id/taf_loading_spinner"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="16dp"
+            android:indeterminateTint="@color/aero_accent"
+            android:visibility="gone" />
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cv_traduccion_ia_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            app:cardBackgroundColor="#FFF8E1"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="2dp"
+            app:strokeColor="@color/aero_accent"
+            app:strokeWidth="1dp"
+            android:visibility="gone"
+            tools:visibility="visible">
+            <TextView
+                android:id="@+id/bs_traduccion_ia"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="16dp"
+                android:text="..."
+                android:textColor="@color/aero_text_dark"
+                android:textSize="15sp"
+                android:lineSpacingExtra="4dp"/>
+        </com.google.android.material.card.MaterialCardView>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="Datos Crudos (Raw)"
+            android:textColor="@color/aero_text_medium"
+            android:textSize="14sp" />
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            app:cardBackgroundColor="#F5F5F5"
+            app:cardCornerRadius="8dp"
+            app:cardElevation="0dp">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="12dp">
+                <TextView
+                    android:id="@+id/bs_raw_metar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="..."
+                    android:fontFamily="monospace"
+                    android:textColor="@color/aero_text_medium"
+                    android:textSize="12sp"
+                    android:layout_marginBottom="8dp"/>
+                <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#E0E0E0" android:layout_marginBottom="8dp"/>
+                <TextView
+                    android:id="@+id/bs_raw_taf"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Cargando TAF..."
+                    android:fontFamily="monospace"
+                    android:textColor="@color/aero_text_medium"
+                    android:textSize="12sp" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <View android:layout_width="match_parent" android:layout_height="80dp"/>
+
     </LinearLayout>
-
-    <TextView
-        android:id="@+id/bs_station_name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:text="Aeropuerto"
-        android:textColor="@android:color/darker_gray"
-        android:textSize="16sp" />
-
-    <TextView
-        android:id="@+id/bs_wind"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Viento: -"
-        android:textSize="18sp" />
-
-    <TextView
-        android:id="@+id/bs_visibility"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Visibilidad: -"
-        android:textSize="18sp" />
-
-    <TextView
-        android:id="@+id/bs_temperature"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Temperatura: -"
-        android:textSize="18sp" />
-
-    <TextView
-        android:id="@+id/bs_raw_metar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:background="#f0f0f0"
-        android:padding="8dp"
-        android:text="..."
-        android:fontFamily="monospace"
-        android:textSize="14sp" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="Pronóstico (TAF):"
-        android:textSize="16sp"
-        android:textStyle="bold" />
-
-    <TextView
-        android:id="@+id/bs_raw_taf"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
-        android:background="#f0f0f0"
-        android:padding="8dp"
-        android:text="Cargando..."
-        android:fontFamily="monospace"
-        android:textSize="14sp" />
-
-    <Button
-        android:id="@+id/btn_traducir_taf"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="Traducir TAF con IA ✨" />
-
-    <ProgressBar
-        android:id="@+id/taf_loading_spinner"
-        style="?android:attr/progressBarStyle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="8dp"
-        android:visibility="gone" />
-
-    <TextView
-        android:id="@+id/bs_traduccion_ia"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:background="#F3E5F5"
-        android:padding="12dp"
-        android:text="..."
-        android:textSize="14sp"
-        android:visibility="gone" />
-
-</LinearLayout>
+</androidx.core.widget.NestedScrollView>

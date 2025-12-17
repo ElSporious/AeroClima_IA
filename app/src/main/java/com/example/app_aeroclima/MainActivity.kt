@@ -41,7 +41,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     // UI Variables (Búsqueda)
     private lateinit var icaoInput: EditText
     private lateinit var searchButton: Button
-    private lateinit var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>
+    private lateinit var bottomSheetBehavior: BottomSheetBehavior<androidx.core.widget.NestedScrollView>
     private lateinit var searchLayout: LinearLayout
 
     // UI Variables (BottomSheet)
@@ -80,7 +80,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         searchLayout = findViewById(R.id.search_layout)
         icaoInput = findViewById(R.id.icao_input)
         searchButton = findViewById(R.id.search_button)
-        val bottomSheetLayout = findViewById<LinearLayout>(R.id.bottom_sheet_layout)
+        val bottomSheetLayout = findViewById<androidx.core.widget.NestedScrollView>(R.id.bottom_sheet_layout)
         bottomSheetBehavior = BottomSheetBehavior.from(bottomSheetLayout)
 
         bsIcaoCode = findViewById(R.id.bs_icao_code)
@@ -204,7 +204,16 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
         bsIcaoCode.text = metar.icao ?: ""
         bsStationName.text = metar.station?.name ?: ""
-        bsVisibility.text = "Visibilidad: ${metar.visibility?.meters ?: "-"} m"
+
+        // Convertimos a número para poder comparar
+        val visValue = metar.visibility?.meters?.toString()?.toDoubleOrNull() ?: 0.0
+
+        if (visValue >= 9999) {
+            bsVisibility.text = "Visibilidad: +10 km"
+        } else {
+            bsVisibility.text = "Visibilidad: ${metar.visibility?.meters ?: "-"} m"
+        }
+
         bsTemperature.text = "Temp: ${metar.temperature?.celsius ?: "-"}°C"
         bsRawMetar.text = metar.raw_text ?: ""
 
@@ -279,8 +288,11 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
+        mMap.setPadding(0, 250, 0, 0)
+
         enableMyLocation()
         viewModel.metarData.value?.let { updateMap(it) }
+
         mMap.setOnMarkerClickListener {
             bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
             true

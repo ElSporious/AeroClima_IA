@@ -1,5 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
+    <color name="aero_primary">#1565C0</color> <color name="aero_primary_dark">#0D47A1</color>
+    <color name="aero_accent">#FF9800</color> <color name="aero_background_light">#F5F7FA</color> <color name="aero_card_background">#FFFFFF</color>
+
+    <color name="aero_text_dark">#263238</color> <color name="aero_text_medium">#546E7A</color> <color name="aero_text_light">#FFFFFF</color> <color name="colorPrimary">@color/aero_primary</color>
+    <color name="colorPrimaryVariant">@color/aero_primary_dark</color>
+    <color name="colorOnPrimary">@color/aero_text_light</color>
+    <color name="colorSecondary">@color/aero_accent</color>
+    <color name="colorOnSecondary">@color/aero_text_dark</color>
+
+    <color name="black">#000000</color>
+    <color name="white">#FFFFFF</color>
 </resources>

@@ -1,9 +1,33 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
-    <style name="Base.Theme.App_AeroClima" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+    <style name="Theme.App_AeroClima" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/aero_primary</item>
+        <item name="colorPrimaryVariant">@color/aero_primary_dark</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorSecondary">@color/aero_accent</item>
+        <item name="colorSecondaryVariant">@color/aero_accent</item>
+        <item name="colorOnSecondary">@color/black</item>
+        <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
+        <item name="android:windowBackground">@color/aero_background_light</item>
     </style>
 
-    <style name="Theme.App_AeroClima" parent="Base.Theme.App_AeroClima" />
+    <style name="AeroButton" parent="Widget.MaterialComponents.Button">
+        <item name="backgroundTint">@color/aero_primary</item>
+        <item name="cornerRadius">8dp</item>
+        <item name="android:paddingVertical">12dp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="AeroTextButton" parent="Widget.MaterialComponents.Button.TextButton">
+        <item name="android:textColor">@color/aero_primary</item>
+    </style>
+
+    <style name="AeroInputLayout" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="boxStrokeColor">@color/aero_primary</item>
+        <item name="boxStrokeWidthFocused">2dp</item>
+        <item name="hintTextColor">@color/aero_primary</item>
+        <item name="boxCornerRadiusTopStart">8dp</item>
+        <item name="boxCornerRadiusTopEnd">8dp</item>
+        <item name="boxCornerRadiusBottomStart">8dp</item>
+        <item name="boxCornerRadiusBottomEnd">8dp</item>
+    </style>
 </resources>

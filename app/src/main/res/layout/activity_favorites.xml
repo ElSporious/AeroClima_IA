@@ -3,33 +3,48 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#F5F5F5">
+    android:background="@color/aero_background_light">
 
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@color/aero_primary"
         android:padding="24dp"
-        android:text="Mis Aeropuertos"
-        android:textSize="28sp"
-        android:textStyle="bold"
-        android:textColor="@color/black"
-        android:background="@color/white"
-        android:elevation="4dp"/>
+        android:elevation="4dp"
+        android:orientation="vertical">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Mis Aeropuertos"
+            android:fontFamily="sans-serif-black"
+            android:textSize="28sp"
+            android:textColor="@color/white"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tus rutas frecuentes."
+            android:textColor="@color/white"
+            android:alpha="0.8"/>
+    </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_favorites"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="8dp"
+        android:paddingTop="16dp"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp"
         android:clipToPadding="false"/>
 
     <TextView
         android:id="@+id/tv_empty"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="No tienes favoritos aún"
+        android:text="No tienes favoritos guardados.\nBusca un aeropuerto y toca la estrella."
         android:gravity="center"
-        android:layout_marginTop="50dp"
+        android:textColor="@color/aero_text_medium"
+        android:layout_marginTop="100dp"
+        android:lineSpacingExtra="4dp"
         android:visibility="gone"/>
 
 </LinearLayout>

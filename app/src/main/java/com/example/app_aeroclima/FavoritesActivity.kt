@@ -15,23 +15,21 @@ class FavoritesActivity : AppCompatActivity() {
     private val mysqlManager = MySqlManager()
     private lateinit var recycler: RecyclerView
     private lateinit var adapter: FavoritesAdapter
-    private lateinit var tvEmpty: TextView
+    private lateinit var emptyView: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_favorites)
 
         recycler = findViewById(R.id.recycler_favorites)
-        tvEmpty = findViewById(R.id.tv_empty)
+        emptyView = findViewById(R.id.tv_empty)
 
-        // Configurar la lista vacía al principio
         recycler.layoutManager = LinearLayoutManager(this)
+
         adapter = FavoritesAdapter(emptyList()) { selectedIcao ->
-            // CUANDO TOCAN UN AEROPUERTO:
-            // Devolvemos el resultado a la MainActivity y cerramos esta pantalla
-            val intent = Intent()
-            intent.putExtra("SELECTED_ICAO", selectedIcao)
-            setResult(RESULT_OK, intent)
+            val resultIntent = Intent()
+            resultIntent.putExtra("SELECTED_ICAO", selectedIcao)
+            setResult(RESULT_OK, resultIntent)
             finish()
         }
         recycler.adapter = adapter
@@ -40,16 +38,20 @@ class FavoritesActivity : AppCompatActivity() {
     }
 
     private fun loadFavorites() {
-        // Llamamos al PHP a través de Ngrok
-        mysqlManager.getFavorites { list ->
-            if (list.isEmpty()) {
-                tvEmpty.visibility = View.VISIBLE
-                recycler.visibility = View.GONE
-            } else {
-                tvEmpty.visibility = View.GONE
-                recycler.visibility = View.VISIBLE
-                adapter.updateList(list)
+        mysqlManager.getFavorites(
+            onSuccess = { list ->
+                if (list.isEmpty()) {
+                    emptyView.visibility = View.VISIBLE
+                    recycler.visibility = View.GONE
+                } else {
+                    emptyView.visibility = View.GONE
+                    recycler.visibility = View.VISIBLE
+                    adapter.updateList(list)
+                }
+            },
+            onFailure = {
+                Toast.makeText(this, "Error al cargar favoritos", Toast.LENGTH_SHORT).show()
             }
-        }
+        )
     }
 }

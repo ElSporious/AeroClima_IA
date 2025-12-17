@@ -1,5 +1,6 @@
 package com.example.app_aeroclima
 
+import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -11,15 +12,14 @@ import androidx.lifecycle.lifecycleScope
 import com.example.app_aeroclima.db.MySqlManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import org.mindrot.jbcrypt.BCrypt
-
 
 class RegisterActivity : AppCompatActivity() {
 
     private lateinit var etUsername: EditText
     private lateinit var etPassword: EditText
     private lateinit var btnRegister: Button
+    private lateinit var btnGoToLogin: Button
 
     private val mysqlManager = MySqlManager()
 
@@ -30,8 +30,14 @@ class RegisterActivity : AppCompatActivity() {
         etUsername = findViewById(R.id.etRegisterUsername)
         etPassword = findViewById(R.id.etRegisterPassword)
         btnRegister = findViewById(R.id.btnRegister)
+        btnGoToLogin = findViewById(R.id.btnGoToLogin)
 
         btnRegister.isEnabled = false
+
+        btnGoToLogin.setOnClickListener {
+            startActivity(Intent(this, LoginActivity::class.java))
+            finish()
+        }
 
         val registerTextWatcher = object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
@@ -40,7 +46,6 @@ class RegisterActivity : AppCompatActivity() {
             override fun afterTextChanged(s: Editable?) {
                 val user = etUsername.text.toString().trim()
                 val pass = etPassword.text.toString().trim()
-
                 btnRegister.isEnabled = user.isNotEmpty() && pass.isNotEmpty()
             }
         }
@@ -52,27 +57,22 @@ class RegisterActivity : AppCompatActivity() {
             val user = etUsername.text.toString().trim()
             val pass = etPassword.text.toString().trim()
 
-            // Validación de email
             if (!isValidEmail(user)) {
                 Toast.makeText(this, "Por favor, ingrese un email válido.", Toast.LENGTH_LONG).show()
                 return@setOnClickListener
             }
 
-            // Validación de longitud de contraseña
             if (pass.length < 6) {
                 Toast.makeText(this, "La contraseña debe tener al menos 6 caracteres.", Toast.LENGTH_LONG).show()
                 return@setOnClickListener
             }
 
-
             btnRegister.isEnabled = false
             Toast.makeText(this, "Creando usuario...", Toast.LENGTH_SHORT).show()
 
             lifecycleScope.launch(Dispatchers.IO) {
-                // Hashear la contraseña
                 val hashedPassword = BCrypt.hashpw(pass, BCrypt.gensalt())
 
-                // Registrar en MySQL
                 mysqlManager.registerUser(
                     user,
                     hashedPassword,
